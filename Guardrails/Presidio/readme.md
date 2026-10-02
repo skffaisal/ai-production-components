@@ -1,7 +1,7 @@
 # Presidio 
 
 ### used for PII detection and de-identification
-
+        
 can be used in 
 
 * Texts 
@@ -30,6 +30,19 @@ This saves the model directly into your pyproject.toml. The next time you or som
 Its also available as a docker service 
 
 
+
+Presidio
+├── Analyzer                         
+├── Application result model         
+├── Detection policy                 
+├── Pattern custom recognizer        
+├── Context-aware recognizer         
+├── Advanced/custom recognizers      
+├── Anonymization                    
+├── Policy engine                    
+├── Failure/security behavior        
+├── Testing/evaluation               
+└── Operational production   
 
 
 

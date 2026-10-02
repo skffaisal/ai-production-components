@@ -25,6 +25,12 @@ from presidio_anonymizer import AnonymizerEngine
 
 from types import MappingProxyType
 
+from presidio_analyzer import (
+    AnalyzerEngine,
+    Pattern,
+    PatternRecognizer,
+)
+
 
 # ============================================================
 # Result Models
@@ -89,6 +95,41 @@ DEFAULT_ENTITY_THRESHOLDS: dict[str, float] = {
 # Prevent accidental mutation of the global policy at runtime.
 ENTITY_THRESHOLDS = MappingProxyType(DEFAULT_ENTITY_THRESHOLDS)
 
+
+
+# ============================================================
+# Custom Recognizers
+# ============================================================
+
+EMPLOYEE_ID_PATTERN = Pattern(
+    name="employee_id_pattern",
+    regex=r"\b\d{6}\b",
+    score=0.05,
+)
+
+
+class EmployeeIdRecognizer(PatternRecognizer):
+    """
+    Recognizes employee IDs based on a numeric pattern plus context.
+
+    Example:
+        Employee ID: 123456
+        Employee number: 987654
+    """
+
+    def __init__(self) -> None:
+        super().__init__(
+            supported_entity="EMPLOYEE_ID",
+            patterns=[EMPLOYEE_ID_PATTERN],
+            context=[
+                "employee",
+                "employee id",
+                "employee number",
+                "staff id",
+                "staff number",
+            ],
+        )
+
 # ============================================================
 # PII Guardrail
 # ============================================================
@@ -104,6 +145,17 @@ class PIIGuardrail:
     def __init__(self) -> None:
         self._analyzer = AnalyzerEngine()
         self._anonymizer = AnonymizerEngine()
+
+        self._register_custom_recognizers()
+
+    def _register_custom_recognizers(self) -> None:
+        """
+        Register application-specific Presidio recognizers.
+        """
+
+        self._analyzer.registry.add_recognizer(
+            EmployeeIdRecognizer()
+        )
 
     def detect(
         self,
@@ -134,8 +186,8 @@ class PIIGuardrail:
                 0.90, # if the above entity type not found , using 0.90 as threshold
             )
 
-            if result.score < threshold:
-                continue
+            # if result.score < threshold:
+                # continue
 
             detected_entities.append(
                 DetectedEntity(
@@ -153,11 +205,10 @@ class PIIGuardrail:
 if __name__ == "__main__":
     guardrail = PIIGuardrail()
 
-    text = (
-        "Contact John Smith at john.smith@example.com "
-        "or call (415) 555-0132. "
-        "Credit card: 4111 1111 1111 1111."
-    )
+    text = """
+    Employee The reference number is 123456." requested access.
+    Contact them at employee@example.com.
+    """
 
     results = guardrail.detect(text)
 
