@@ -1,0 +1,1 @@
+This directory is for LLM projects implimentation (building actual applications) , like RAG, Agents etc
