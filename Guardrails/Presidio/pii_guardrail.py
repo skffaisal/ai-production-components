@@ -280,6 +280,27 @@ ANONYMIZATION_OPERATORS = {
     ),
 }
 
+
+# ============================================================
+# GUARDRAIL POLICY
+# ============================================================
+
+POLICY_ALLOW = "ALLOW"
+POLICY_REDACT = "REDACT"
+POLICY_MASK = "MASK"
+POLICY_BLOCK = "BLOCK"
+
+
+ENTITY_POLICIES = {
+    "PERSON": POLICY_REDACT,
+    "EMAIL_ADDRESS": POLICY_REDACT,
+    "PHONE_NUMBER": POLICY_MASK,
+    "CREDIT_CARD": POLICY_BLOCK,
+    "IBAN_CODE": POLICY_BLOCK,
+    "EMPLOYEE_ID": POLICY_REDACT,
+}
+
+
 # ============================================================
 # PII Guardrail
 # ============================================================
@@ -378,6 +399,110 @@ class PIIGuardrail:
             analyzer_results=results,
             operators=ANONYMIZATION_OPERATORS,
         ).text
+    
+    # ============================================================
+    # POLICY EVALUATION
+    # ============================================================
+
+    def evaluate_policy(
+        self,
+        entities: tuple[DetectedEntity, ...],
+    ) -> str:
+        if not entities:
+            return POLICY_ALLOW
+
+        decisions = {
+            ENTITY_POLICIES.get(
+                entity.entity_type,
+                POLICY_ALLOW,
+            )
+            for entity in entities
+        }
+
+        if POLICY_BLOCK in decisions:
+            return POLICY_BLOCK
+
+        if POLICY_REDACT in decisions:
+            return POLICY_REDACT
+
+        if POLICY_MASK in decisions:
+            return POLICY_MASK
+
+        return POLICY_ALLOW
+
+    # ============================================================
+# GUARDRAIL PROCESSING
+# ============================================================
+
+    def process(
+        self,
+        text: str,
+        *,
+        language: str = "en",
+    ) -> GuardrailResult:
+        if not text:
+            return GuardrailResult(
+            allowed=True,
+            action=POLICY_ALLOW,
+            original_text=text,
+            text=text,
+            entities=(),
+            metadata={},
+            )
+
+        entities = self.detect(
+            text,
+            language=language,
+        )
+
+        action = self.evaluate_policy(entities)
+
+    # --------------------------------------------------------
+    # BLOCK
+    # --------------------------------------------------------
+        if action == POLICY_BLOCK:
+            return GuardrailResult(
+            allowed=False,
+            action=POLICY_BLOCK,
+            original_text=text,
+            text="",
+            entities=entities,
+            metadata={
+                "reason": "blocked_entity_detected",
+            },
+        )
+
+    # --------------------------------------------------------
+    # ALLOW
+    # --------------------------------------------------------
+        if action == POLICY_ALLOW:
+            return GuardrailResult(
+            allowed=True,
+            action=POLICY_ALLOW,
+            original_text=text,
+            text=text,
+            entities=entities,
+            metadata={},
+        )
+
+    # --------------------------------------------------------
+    # REDACT / MASK
+    # --------------------------------------------------------
+        sanitized_text = self.anonymize(
+            text,
+            language=language,
+        )
+
+        return GuardrailResult(
+        allowed=True,
+        action=action,
+        original_text=text,
+        text=sanitized_text,
+        entities=entities,
+        metadata={
+            "entities_sanitized": len(entities),
+        },
+    )
 
 
 if __name__ == "__main__":
@@ -402,4 +527,34 @@ Some unknown sensitive value: SECRET-ABC-999
     #         f"(score={entity.score:.2f})"
     #     )
 
-    print(guardrail.anonymize(text))
+    # print(guardrail.anonymize(text))
+#     entities = guardrail.detect(
+#     "Hello, how are you?"
+# )
+
+#     decision = guardrail.evaluate_policy(entities)
+
+#     print(decision)
+
+    # result = guardrail.process(
+    # "What is the capital of India?"
+    # )
+
+    # print(result)
+    print(
+    guardrail.process(
+        "My name is John Smith."
+    )
+)
+
+    print(
+    guardrail.process(
+        "Call me at +1 415-555-0132."
+    )
+)
+
+    print(
+    guardrail.process(
+        "My card is 4111 1111 1111 1111."
+    )
+)
