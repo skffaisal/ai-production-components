@@ -17,6 +17,7 @@ spacy.load('en_core_web_lg') -> but here precidio is using this spacy internally
 * pre-trained model package is being downloaded
 * this is used for NER (named entity recognition) 
 * transformers based also can be used using "pip install "presidio-analyzer[transformers]""
+* other than spacy, presidio can also be used with alternative NLP engines , like stanza, Hugging face models etc
 
 
 in production

@@ -21,3 +21,26 @@
 
 
 you need impliment defense in depth architecture for guardrails
+
+
+Input Guardrails
+│
+├── PII / Sensitive Data
+│   └── Microsoft Presidio          
+│
+├── Prompt Injection               
+├── Jailbreak Detection
+├── Content / Safety Guardrails
+├── Input Validation
+├── Tool / Agent Guardrails
+└── Policy Enforcement
+
+
+Output Guardrails
+├── Structured output validation
+├── Schema validation
+├── Hallucination / factuality checks
+├── Sensitive-data leakage
+└── Safety / policy checks
+
+
