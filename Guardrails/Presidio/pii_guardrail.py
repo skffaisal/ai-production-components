@@ -20,7 +20,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 
 from types import MappingProxyType
@@ -30,6 +29,7 @@ from presidio_analyzer import (
     Pattern,
     PatternRecognizer,
 )
+from presidio_anonymizer.entities import OperatorConfig
 
 
 # ============================================================
@@ -104,8 +104,22 @@ ENTITY_THRESHOLDS = MappingProxyType(DEFAULT_ENTITY_THRESHOLDS)
 EMPLOYEE_ID_PATTERN = Pattern(
     name="employee_id_pattern",
     regex=r"\b\d{6}\b",
-    score=0.05,
+    score=0.05, 
+    # regex=r"\bEMP-\d{6}\b", this can be used if known 
+    # score=0.95,
 )
+
+"""
+here initially setting the score low, then it tries to undestand the context by 
+
+                "employee",
+                "employee id",
+                "employee number",
+                "staff id",
+                "staff number",
+
+and the score increase based on what the input contains
+"""
 
 
 class EmployeeIdRecognizer(PatternRecognizer):
@@ -129,6 +143,43 @@ class EmployeeIdRecognizer(PatternRecognizer):
                 "staff number",
             ],
         )
+
+
+
+# ============================================================
+# ANONYMIZATION POLICY
+# ============================================================
+
+ANONYMIZATION_OPERATORS = {
+    "PERSON": OperatorConfig(
+        "replace",
+        {"new_value": "[PERSON]"},
+    ),
+    "EMAIL_ADDRESS": OperatorConfig(
+        "replace",
+        {"new_value": "[EMAIL]"},
+    ),
+    "PHONE_NUMBER": OperatorConfig(
+        "mask",
+        {
+            "chars_to_mask": 13,
+            "masking_char": "*",
+            "from_end": True,
+        },
+    ),
+    "CREDIT_CARD": OperatorConfig(
+        "redact",
+        {},
+    ),
+    "EMPLOYEE_ID": OperatorConfig(
+        "replace",
+        {"new_value": "[EMPLOYEE_ID]"},
+    ),
+    "DEFAULT": OperatorConfig(
+        "replace",
+        {"new_value": "[REDACTED]"},
+    ),
+}
 
 # ============================================================
 # PII Guardrail
@@ -201,20 +252,42 @@ class PIIGuardrail:
 
         return tuple(detected_entities)
 
+    def anonymize(
+        self,
+        text: str,
+        *,
+        language: str = "en",
+    ) -> str:
+        if not text:
+            return ""
+
+        results = self._analyzer.analyze(
+            text=text,
+            language=language,
+        )
+
+        return self._anonymizer.anonymize(
+            text=text,
+            analyzer_results=results,
+            operators=ANONYMIZATION_OPERATORS,
+        ).text
+
 
 if __name__ == "__main__":
     guardrail = PIIGuardrail()
 
-    text = """
-    Employee The reference number is 123456." requested access.
-    Contact them at employee@example.com.
-    """
+    text = (
+    "Contact John Smith at john.smith@example.com or 9343774053 "
+    "or 4111 1111 1111 1111."
+    )
 
-    results = guardrail.detect(text)
+    # results = guardrail.detect(text)
 
-    for entity in results:
-        print(
-            f"{entity.entity_type}: "
-            f"{entity.text!r} "
-            f"(score={entity.score:.2f})"
-        )
+    # for entity in results:
+    #     print(
+    #         f"{entity.entity_type}: "
+    #         f"{entity.text!r} "
+    #         f"(score={entity.score:.2f})"
+    #     )
+
+    print(guardrail.anonymize(text))
