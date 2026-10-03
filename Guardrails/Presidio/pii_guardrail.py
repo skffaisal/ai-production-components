@@ -30,6 +30,7 @@ from presidio_analyzer import (
     PatternRecognizer,
 )
 from presidio_anonymizer.entities import OperatorConfig
+from presidio_anonymizer.operators import Operator, OperatorType
 
 
 # ============================================================
@@ -144,40 +145,138 @@ class EmployeeIdRecognizer(PatternRecognizer):
             ],
         )
 
+# ============================================================
+# CUSTOM ANONYMIZATION OPERATORS
+# ============================================================
 
+class EmailTagOperator(Operator):
+    """
+    Example custom anonymization operator.
+
+    Transforms:
+        john@example.com
+
+    Into:
+        [email:john@example.com]
+    """
+
+    def operate(
+        self,
+        text: str,
+        params: dict | None = None,
+    ) -> str:
+        return f"[email:{text}]"
+
+    def validate(
+        self,
+        params: dict | None = None,
+    ) -> None:
+        pass
+
+    def operator_name(self) -> str:
+        return "email_tag"
+
+    def operator_type(self) -> OperatorType:
+        return OperatorType.Anonymize
 
 # ============================================================
 # ANONYMIZATION POLICY
 # ============================================================
 
 ANONYMIZATION_OPERATORS = {
+    # --------------------------------------------------------
+    # REPLACE
+    # --------------------------------------------------------
     "PERSON": OperatorConfig(
         "replace",
-        {"new_value": "[PERSON]"},
+        {
+            "new_value": "[PERSON]",
+        },
     ),
+
     "EMAIL_ADDRESS": OperatorConfig(
         "replace",
-        {"new_value": "[EMAIL]"},
+        {
+            "new_value": "[EMAIL]",
+        },
     ),
+
+    "EMPLOYEE_ID": OperatorConfig(
+        "replace",
+        {
+            "new_value": "[EMPLOYEE_ID]",
+        },
+    ),
+
+    # --------------------------------------------------------
+    # MASK
+    # --------------------------------------------------------
     "PHONE_NUMBER": OperatorConfig(
         "mask",
         {
-            "chars_to_mask": 13,
+            "chars_to_mask": 7,
             "masking_char": "*",
             "from_end": True,
         },
     ),
+
+    # --------------------------------------------------------
+    # REDACT
+    # --------------------------------------------------------
     "CREDIT_CARD": OperatorConfig(
         "redact",
         {},
     ),
-    "EMPLOYEE_ID": OperatorConfig(
-        "replace",
-        {"new_value": "[EMPLOYEE_ID]"},
+
+    # --------------------------------------------------------
+    # HASH
+    # --------------------------------------------------------
+    "IBAN_CODE": OperatorConfig(
+        "hash",
+        {
+            "hash_type": "sha256",
+        },
     ),
+
+    # --------------------------------------------------------
+    # ENCRYPT
+    # --------------------------------------------------------
+    #
+    # Encryption requires appropriate encryption parameters
+    # and key-management strategy. Configure this only when
+    # your application actually needs reversible protection.
+    #
+    # Keep the section here as a production reference rather
+    # than enabling it blindly.
+    #
+    # "PERSON": OperatorConfig(
+    #     "encrypt",
+    #     {
+    #         # encryption parameters depend on the
+    #         # Presidio encryption operator configuration
+    #     },
+    # ),
+
+    # --------------------------------------------------------
+    # CUSTOM OPERATOR
+    # --------------------------------------------------------
+    #
+    # Enable this when the application requires a custom
+    # transformation.
+    #
+    "EMAIL_ADDRESS": OperatorConfig(
+        "email_tag",
+        {},
+    ),
+
+    # --------------------------------------------------------
+    # FALLBACK
+    # --------------------------------------------------------
     "DEFAULT": OperatorConfig(
         "replace",
-        {"new_value": "[REDACTED]"},
+        {
+            "new_value": "[REDACTED]",
+        },
     ),
 }
 
@@ -198,6 +297,7 @@ class PIIGuardrail:
         self._anonymizer = AnonymizerEngine()
 
         self._register_custom_recognizers()
+        self._register_custom_anonymizers()
 
     def _register_custom_recognizers(self) -> None:
         """
@@ -207,6 +307,13 @@ class PIIGuardrail:
         self._analyzer.registry.add_recognizer(
             EmployeeIdRecognizer()
         )
+
+    def _register_custom_anonymizers(self) -> None:
+
+        self._anonymizer.add_anonymizer(
+
+            EmailTagOperator
+    )
 
     def detect(
         self,
@@ -237,8 +344,8 @@ class PIIGuardrail:
                 0.90, # if the above entity type not found , using 0.90 as threshold
             )
 
-            # if result.score < threshold:
-                # continue
+            if result.score < threshold:
+                continue
 
             detected_entities.append(
                 DetectedEntity(
@@ -276,10 +383,15 @@ class PIIGuardrail:
 if __name__ == "__main__":
     guardrail = PIIGuardrail()
 
-    text = (
-    "Contact John Smith at john.smith@example.com or 9343774053 "
-    "or 4111 1111 1111 1111."
-    )
+    text = """
+Employee ID: EMP-123456
+Name: John Smith
+Email: john.smith@example.com
+Phone: +1 415-555-0132
+Credit Card: 4111 1111 1111 1111
+IBAN: GB82WEST12345698765432
+Some unknown sensitive value: SECRET-ABC-999
+"""
 
     # results = guardrail.detect(text)
 
