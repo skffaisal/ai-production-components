@@ -18,12 +18,13 @@ and start using this in the projects you are building
 
 # Checklist 1
 
-Phase 1: Tracing fundamentals
-Install the SDK, trace an LLM call, and read the trace in the UI.
-Understand traces, observations, generations, spans, sessions, and users.
-Add metadata, tags, user_id, and session_id, and use the integrations for OpenAI, LangChain, or LlamaIndex.
-Trace a full agent workflow (retrieval, tool calls, nested steps), not just single LLM calls.
+## Phase 1: Tracing fundamentals
+* Install the SDK, 
+* trace an LLM call, and read the trace in the UI.
+* Understand traces, observations, generations, spans, sessions, and users.
+* Add metadata, tags, user_id, and session_id, and use the integrations for OpenAI, LangChain, or LlamaIndex.
 Check that token usage and cost are tracked correctly, including for models Langfuse doesn't know.
+* Trace a full agent workflow (retrieval, tool calls, nested steps), not just single LLM calls.
 
 Done when: you can take any bad response from your app and find exactly which step caused it.
 

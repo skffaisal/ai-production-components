@@ -87,3 +87,22 @@ Generation types from documentation:
 
 
 Custom prices needs to be defined if langfuse does not have the info of the price of model you are using, by going to Project Settings → Model Definitions
+
+
+## Sessions
+
+Langfuse recommends sessions for multi-turn conversations; each turn can be its own trace while the session groups them together.
+
+Trace = one request/turn
+
+Session = group of related requests/traces
+
+```
+Trace: One independent request.
+
+Observation: An individual operation within a trace.
+
+Session: Multiple related traces sharing a session ID.
+
+User ID: Identifies the user across sessions.
+```
