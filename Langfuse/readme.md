@@ -4,6 +4,17 @@ same docker-compose.yml is copied here
 
 then docker compose up -d
 
+Thats it, now can can create a project by going into http://localhost:3000/
+
+get 
+```
+LANGFUSE_PUBLIC_KEY=...
+LANGFUSE_SECRET_KEY=...
+LANGFUSE_BASE_URL=http://localhost:3000
+```
+
+and start using this in the projects you are building 
+
 
 # Checklist 1
 
