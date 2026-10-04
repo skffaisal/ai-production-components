@@ -26,23 +26,27 @@ if __name__ == "__main__":
     langfuse_handler = CallbackHandler()
 
     with propagate_attributes(
-        trace_name="qwen-chat", # identifies the overall trace
-        user_id="user-123",
-        session_id="session-001",
-        tags=["langchain", "groq", "qwen"],
+        trace_name="qwen-chat-new", # identifies the overall trace
+        user_id="user-1234",
+        session_id="session-002",
+        tags=["cost","added"],
         metadata={
             "application": "langfuse-training",
             "environment": "local",
         },
         ):
             response = model.invoke(
-                "What is jev",
+                "What is product forge ",
                 config={
                     "callbacks": [langfuse_handler],
-                    "run_name": "LLM_CALL_With_Attributes", # identifies the Generation observation
+                    "run_name": "LLM_with_cost", # identifies the Generation observation
                     },
                 )
+    print("\n=== USAGE METADATA ===")
+    print(response.usage_metadata)
 
+    print("\n=== RESPONSE METADATA ===")
+    print(response.response_metadata)
     print(response.content)
 
 

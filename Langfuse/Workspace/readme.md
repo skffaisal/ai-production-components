@@ -84,3 +84,6 @@ Generation types from documentation:
  * evaluator represents functions that assess relevance/correctness/helpfulness of a LLM's outputs.
  * embedding is a call to a LLM to generate embeddings and can include model, token usage and costs
  * guardrail is a component that protects against malicious content or jailbreaks.
+
+
+Custom prices needs to be defined if langfuse does not have the info of the price of model you are using, by going to Project Settings → Model Definitions
