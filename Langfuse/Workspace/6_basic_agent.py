@@ -101,3 +101,4 @@ if __name__ == "__main__":
 
     # Short-lived script: make sure queued Langfuse events are sent.
     langfuse.flush()
+    
