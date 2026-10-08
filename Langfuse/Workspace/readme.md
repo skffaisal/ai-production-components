@@ -106,3 +106,8 @@ Session: Multiple related traces sharing a session ID.
 
 User ID: Identifies the user across sessions.
 ```
+
+
+## Prompt Management
+from the local hosted : 3000 ui
+prompt management -> prompts -> create
