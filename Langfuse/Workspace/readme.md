@@ -169,10 +169,30 @@ User Feedback:
 
 after the 12_user_feedback_test.py code is run, the score is stored in lanfuse, you can go and check in the tracing.
 
-
-
-
-
-
+Annotation Queue:
 
 Annotation Queues are designed for structured human review: reviewers work through a collection of traces, apply consistent score configurations, and record judgments. Those human judgments can later help validate the LLM judge
+
+Instead of opening traces individually, you'll place several traces into a queue and review them one by one using consistent scoring criteria.
+
+Observability --> tracing --> open any observation --> Add to --> Annotation queue --> Create New Queue
+
+```
+Queue name
+qwen-answer-review
+
+Description
+Review Qwen responses for correctness and helpfulness.
+Score configurations
+- answer_quality
+- user_feedback 
+
+```
+  The queue requires at least one score configuration. We'll use answer_quality as the primary human-review label.
+
+Open Tracing --> Select two or three of your existing traces
+
+then Evaluation --> Human Annotation --> Process queue
+
+Open the new queue and start processing its items.
+
