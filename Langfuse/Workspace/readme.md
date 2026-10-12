@@ -120,3 +120,59 @@ now we can trace generations linked to a particular prompt in observability
 
 The default cache TTL is 60 seconds, we can chnage it in the code if wanted 
 
+## Score
+
+A score is a quality judgment attached to a trace, observation, or session.
+
+The four score types
+
+
+| Type          | Example                                     | When to use it                              |
+| ------------- | ------------------------------------------- | ------------------------------------------- |
+| `NUMERIC`     | `0.9`                                       | A relevance or quality rating               |
+| `CATEGORICAL` | `"correct"`                                 | A classification from predefined categories |
+| `BOOLEAN`     | `1` or `0`                                  | Pass/fail checks                            |
+| `TEXT`        | `"The answer omitted an important detail."` | Qualitative reviewer notes                  |
+
+
+
+Manual Scoring Interface :
+
+in Observabilility --> tracing -> any observation--> Annotation --> Add Score
+
+but first Score Config is required
+
+Add Score --> Add Score Config
+
+then eg:
+
+
+| Field       | Value                                                       |
+| ----------- | ----------------------------------------------------------- |
+| Name        | `answer_quality`                                            |
+| Data type   | `CATEGORICAL`                                               |
+| Categories  | `good`, `partially_correct`, `incorrect`                    |
+| Description | `Human assessment of the overall quality of an AI response` |
+
+
+you can also later go to Score settings and change the settings if needed
+
+You should be able to select answer_quality and assign one of the three categories for each observation
+
+User Feedback:
+
+| Field       | Value                                                     |
+| ----------- | --------------------------------------------------------- |
+| Name        | `user_feedback`                                           |
+| Data type   | `BOOLEAN`                                                 |
+| Description | `End-user feedback on whether an AI response was helpful` |
+
+after the 12_user_feedback_test.py code is run, the score is stored in lanfuse, you can go and check in the tracing.
+
+
+
+
+
+
+
+Annotation Queues are designed for structured human review: reviewers work through a collection of traces, apply consistent score configurations, and record judgments. Those human judgments can later help validate the LLM judge

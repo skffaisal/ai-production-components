@@ -32,12 +32,12 @@ Done when: you can take any bad response from your app and find exactly which st
 * Move prompts out of your code into Langfuse and link prompt versions to traces.
 * Use labels such as production and staging. Applications fetch labeled versions at runtime, so a prompt change needs no code change or redeploy. 
 * Iterate on prompts in the Playground, and replay a traced call there.
-Handle caching and fallbacks so a Langfuse outage doesn't break your app.
+* Handle caching and fallbacks so a Langfuse outage doesn't break your app.
 
 
-Done when: you can roll out and roll back a prompt change without touching code, and tell whether version 5 beat version 4.
+Done when: you can roll out and roll back a prompt change without touching code, and tell whether version 5 beat version 4. (in phase 3)
 
-Phase 3: Scores and evaluation methods
+## Phase 3: Scores and evaluation methods
 
 This is the core skill.
 
