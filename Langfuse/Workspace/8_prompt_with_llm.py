@@ -72,7 +72,7 @@ if __name__ == "__main__":
     langfuse_handler = CallbackHandler()
 
     response = chain.invoke(
-        {},
+        { "question": "Explain Python decorators using a simple example."},
         config={
             "callbacks": [langfuse_handler],
             "run_name": "MANAGED_PROMPT_QA",

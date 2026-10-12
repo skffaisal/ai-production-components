@@ -28,10 +28,9 @@ Check that token usage and cost are tracked correctly, including for models Lang
 
 Done when: you can take any bad response from your app and find exactly which step caused it.
 
-Phase 2: Prompt management
-Move prompts out of your code into Langfuse and link prompt versions to traces.
-Use labels such as production and staging. Applications fetch labeled versions at runtime, so a prompt change needs no code change or redeploy. 
-langfuse
+## Phase 2: Prompt management
+* Move prompts out of your code into Langfuse and link prompt versions to traces.
+* Use labels such as production and staging. Applications fetch labeled versions at runtime, so a prompt change needs no code change or redeploy. 
 Handle caching and fallbacks so a Langfuse outage doesn't break your app.
 Iterate on prompts in the Playground, and replay a traced call there.
 

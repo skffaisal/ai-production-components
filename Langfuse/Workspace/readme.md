@@ -111,3 +111,9 @@ User ID: Identifies the user across sessions.
 ## Prompt Management
 from the local hosted : 3000 ui
 prompt management -> prompts -> create
+
+you can create multiple prompts in the lanfuse ui , test it in the plaground then use it in code 
+
+multiple versions will be creted , but the version with label production will be imported in code
+
+now we can trace generations linked to a particular prompt in observability
