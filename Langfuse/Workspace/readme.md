@@ -117,3 +117,6 @@ you can create multiple prompts in the lanfuse ui , test it in the plaground the
 multiple versions will be creted , but the version with label production will be imported in code
 
 now we can trace generations linked to a particular prompt in observability
+
+The default cache TTL is 60 seconds, we can chnage it in the code if wanted 
+
