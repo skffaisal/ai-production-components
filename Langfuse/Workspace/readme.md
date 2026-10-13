@@ -267,3 +267,34 @@ Inspect the score and its reasoning before creating it
 
 --> Create Evaluator
 
+Connect the judge to live observations:
+
+Evaluation --> Evaluators --> answer-quality-judge (ie click newly created Evaluator )
+
+Top right , you will see --> Rules 
+
+
+Click Rules --> Attach to rule --> create new rule
+
+here basically you are selecting which incoming observations should trigger evaluators.
+
+Section 1 (Configure Rule Scope)
+
+* In Filter observations, click Generations.
+* Sampling rate controls what percentage of matching incoming observations gets sent to the evaluator.
+
+
+Section 2 (Attach Evaluators)
+* Scroll down to Attach Evaluators and confirm that answer-quality-judge is attached.
+
+
+Section 3 (Name rule)
+* qwen-generation-quality-monitor
+
+--> Save and activate
+
+now you can run  the 8_prompt_with_llm.py , this observation will be automatically scored by the Evaluator we created
+
+you basically see this as a score (	answer-quality-judge), you can see the reasoning of the LLM judge in
+
+Evaluation --> score 

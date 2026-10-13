@@ -51,7 +51,7 @@ model = init_chat_model(
     model="qwen/qwen3.8-27b",
     model_provider="groq",
     temperature=0.2,
-    max_tokens=100,
+    # max_tokens=100,
     reasoning_effort="none",
 )
 
