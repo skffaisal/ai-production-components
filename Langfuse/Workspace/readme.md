@@ -196,3 +196,74 @@ then Evaluation --> Human Annotation --> Process queue
 
 Open the new queue and start processing its items.
 
+LLM-as-a-Judge:
+
+Evaluation --> Evaluators --> New evaluator
+
+Section 1 (Define evaluation)
+
+Choose LLM-as-a-Judge (not Code Evaluator or Decision Model).
+
+Select model --> choose any added model
+
+
+A rubric is a set of explicit criteria that tells the judge LLM how to evaluate an answer. Think of it as the marking scheme you'd give a human examiner.
+
+by default you will see something like 
+
+```
+Evaluate the quality of the response.
+
+Input: {{input}}
+Response: {{output}}
+```
+
+Replace the evaluator instructions with the below rubic
+
+```
+Evaluate the AI response against the user's question.
+
+Assess these criteria:
+1. **Correctness:** Is the response factually correct?
+2. **Relevance:** Does it directly answer the question?
+3. **Completeness:** Does it address the important parts of the question?
+
+Scoring:
+- 1.0: Correct, relevant, and sufficiently complete.
+- 0.5: Partially correct or relevant, but has a meaningful omission or minor error.
+- 0.0: Incorrect, irrelevant, or fundamentally misleading.
+
+Do not reward confident wording if the answer is incorrect.
+Do not penalize a concise answer if it adequately answers the question.
+Base your judgment only on the supplied question and response. Do not invent missing context.
+
+User question: {{input}}
+AI response: {{output}}
+
+Return only the numeric score.
+```
+
+there is a preview toggle button on the top right of this box, there the selected observation's input and output will be substituted in place of {{input}} and {{output}}
+
+Keep the score output numeric
+
+Return a: number
+
+With values: between 0 and 1
+
+Section 2 (Map variables to data)
+
+keep default , ie input to input , output to output
+
+Section 3 (Name Evaluator)
+
+Name: answer-quality-judge (its also used as the score name)
+
+Description: Evaluates AI responses for correctness, relevance, and completeness on a 0–1 scale.)
+
+Then select a sample generation in the right-hand panel and test the evaluator.
+
+Inspect the score and its reasoning before creating it
+
+--> Create Evaluator
+
