@@ -44,8 +44,8 @@ This is the core skill.
 * User feedback: thumbs up/down sent as scores.
 * Manual review: annotation queues, where reviewers work through traces and label them.
 * LLM-as-a-judge: write a good judge prompt, run it on live traffic, and inspect the judge's own execution trace when it misbehaves.
-Code evaluators: deterministic checks like format, length, regex, and schema validation. These have been generally available since May 28, 2026, and run on live observations. 
-Understand the score types (numeric, categorical, boolean) and score analysis, and validate your judge against human labels.
+* Code evaluators: deterministic checks like format, length, regex, and schema validation. These have been generally available since May 28, 2026, and run on live observations. 
+* Understand the score types (numeric, categorical, boolean) and score analysis, and validate your judge against human labels.
 
 Done when: you have at least three different evaluators running on one app, and you can show how closely your LLM judge agrees with human reviewers.
 

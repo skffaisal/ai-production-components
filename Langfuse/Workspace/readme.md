@@ -357,4 +357,62 @@ So if you are running self hosted version, and prerequisites are installed, you 
 
 If not, you can create a python evaluator in the app, which works with both Cloud / self hosted, ie Scores via API/SDK
 
-This approach is portable across Langfuse Cloud and self-hosted deployments, including Kubernetes, because the evaluation runs in your application rather than in Langfuse's evaluator execution infrastructure.
+This approach is portable across Langfuse Cloud and self-hosted deployments, including Kubernetes, because the evaluation runs in your application rather than in Langfuse's evaluator execution infrastructure. (implimented in 13_code_evaluator_test.py )
+
+So now we have seen boolean, categorical, and Numeric Scores
+
+Scores --> Analytics
+
+we can see here different scores, and we can see individual analystics of that score, or, compare different scores, but, within the same category
+
+![alt text](image.png)
+
+
+Creating the categorical judge for comparision:
+1. Go to Evaluation → Evaluators → New evaluator.
+2. Select New LLM-as-a-judge.
+3. Use these settings:
+- Name: answer-quality-judge-categorical
+- Description: Categorically evaluates response quality using the same labels as human reviewers.
+- Model: Use the same Groq/Qwen model as your existing judge.
+- Score output type: Select Categorical, not Numeric.
+4. Define exactly these three allowed categories:
+- good
+- partially_correct
+- incorrect
+
+Rubic
+```
+Evaluate the quality of the AI response against the user's question.
+
+**Input:** {{input}}  
+**Response:** {{output}}
+
+Assess these criteria:
+
+1. **Correctness:** Is the response factually correct?
+2. **Relevance:** Does it directly answer the user's question?
+3. **Completeness:** Does it address the important parts of the question?
+
+**Categories:**
+
+- `good`: The response is correct, relevant, and sufficiently complete.
+- `partially_correct`: The response is partially correct or relevant, but has a meaningful omission or minor error.
+- `incorrect`: The response is incorrect, irrelevant, or fundamentally misleading.
+
+Do not reward confident wording if the answer is incorrect.  
+Do not penalize a concise answer if it adequately answers the question.  
+Base your judgment only on the supplied question and response. Do not invent missing context.
+
+**User question:** {{input}}  
+**AI response:** {{output}}
+
+Return exactly one category: `good`, `partially_correct`, or `incorrect`.
+```
+
+now select any generation observation and test the llm judge, and then create the Evaluator
+
+
+and then as done previously, you need to attach the rule for the evaluator, attached the same rule qwen-generation-quality-monitor
+
+now we can select the human annotated score vs the llm judge and you can show how closely your LLM judge agrees with human reviewers.
