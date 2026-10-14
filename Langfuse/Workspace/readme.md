@@ -298,3 +298,63 @@ now you can run  the 8_prompt_with_llm.py , this observation will be automatical
 you basically see this as a score (	answer-quality-judge), you can see the reasoning of the LLM judge in
 
 Evaluation --> score 
+
+on the same page top right , click on columns , and check the Execution trace , 
+
+once you click on the execution trace , you will see the input and output of the LLM judge and its reasoning 
+
+
+Code Evaluator:
+
+Evaluation → Evaluators → New evaluator.
+
+Select Code Evaluator
+
+Select python 
+
+replace the template with 
+
+```
+
+def evaluate(ctx: EvaluationContext) -> EvaluationResult:
+    output = ctx.observation.output
+
+    # Extract text from common chat-generation output shapes.
+    if isinstance(output, dict):
+        output = output.get("content", "")
+
+    if isinstance(output, list):
+        parts = []
+        for item in output:
+            if isinstance(item, dict):
+                parts.append(str(item.get("content", "")))
+            else:
+                parts.append(str(item))
+        output = " ".join(parts)
+
+    has_content = output is not None and bool(str(output).strip())
+
+    return EvaluationResult(
+        scores=[
+            Score(
+                name="response_non_empty",
+                value=has_content,
+                data_type="BOOLEAN",
+                comment=(
+                    "Response contains content."
+                    if has_content
+                    else "Response is missing or empty."
+                ),
+            )
+        ]
+    )
+
+```
+
+Note: The official documentation confirms that code evaluators require a dispatcher on self-hosted Langfuse. Python specifically requires the aws-lambda dispatcher; insecure-local supports TypeScript/JavaScript only
+
+So if you are running self hosted version, and prerequisites are installed, you can proceed with testing and creating the evaluator
+
+If not, you can create a python evaluator in the app, which works with both Cloud / self hosted, ie Scores via API/SDK
+
+This approach is portable across Langfuse Cloud and self-hosted deployments, including Kubernetes, because the evaluation runs in your application rather than in Langfuse's evaluator execution infrastructure.
