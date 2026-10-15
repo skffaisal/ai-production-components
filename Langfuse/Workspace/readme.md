@@ -416,3 +416,124 @@ now select any generation observation and test the llm judge, and then create th
 and then as done previously, you need to attach the rule for the evaluator, attached the same rule qwen-generation-quality-monitor
 
 now we can select the human annotated score vs the llm judge and you can show how closely your LLM judge agrees with human reviewers.
+
+
+## Datasets
+
+Datasets in Langfuse are collections of inputs (and expected outputs) for your LLM application. You can run Experiments against these datasets to test new releases before deployment to production.
+
+Open Evaluation → Datasets.
+
+Click + New dataset
+
+Enter the dataset name and description 
+```
+Dataset name:
+evaluation/qwen-chat-regression
+
+Description:
+Regression test cases for the Qwen chat application, including normal requests, edge cases, incorrect responses, and production failures.
+```
+
+Now click Create dataset
+
+you see 3 options:
+
+1. Add manually — understand the dataset item structure.
+2. Upload CSV — bulk-import the test cases.
+3. Add via Code — integrate dataset creation with your Python workflow.
+
+For now, click Add Manually to learn the item structure with one example before we bulk-import the remaining cases.
+
+```
+{
+  "question": "Explain Python decorators using a simple example."
+}
+{
+  "answer": "A decorator is a function that takes another function, adds behavior, and returns a function. For example, a decorator can log before and after a function call without changing the original function's code."
+}
+```
+
+--> Add to Dataset
+
+--> Upload CSV 
+
+select the file langfuse_qwen_regression_cases.csv, this has questions and aswers and metadata
+
+Map (Drag and drop) the columns as follows:
+
+```
+input	Input
+expected_output	Expected output
+category	Metadata
+difficulty	Metadata
+```
+
+--> Import
+
+youll see all the datasets added.
+
+
+To add a real production trace to a dataset:
+
+Open Tracing in Langfuse.
+
+Filter by traceTags:phase3-evaluator-calibration type:GENERATION 
+
+Open a trace and select its ChatGroq generation.
+
+Click + Add to dataset.
+
+Select evaluation/qwen-chat-regression.
+
+
+but since we are maintaining a mapping of 
+```
+{
+  "question": "Explain Pytho.......
+}
+{
+  "answer": "A decorator is.......
+}
+```
+
+deleting the one added trace
+
+tracing --> after filter is applied, select multiple generations with proper answers (considering answers are reviewed and corrected for now)
+
+--> Add to Dataset
+
+
+select the newly created dataset as target dataset
+
+
+Section 1 (Map the input to an `question` object)
+
+input = custom maping 
+
+Select Key-value map.
+
+Set the key to `question`
+
+Set the source to `Input`
+
+Set the JSONPath value to `$[1].content` only if the preview confirms that index 1 is the user message for the selected observations.
+
+
+
+Section 2 (Map the expected output to an `answer` object)
+
+Change it to Custom mapping
+
+Select Key-value map.
+
+Key: answer
+
+Source: Output
+
+Value: `$.content` (since there are no indexes here)
+
+![alt text](image-1.png)
+
+--> Add 5 observations
+

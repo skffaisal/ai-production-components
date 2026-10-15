@@ -49,12 +49,12 @@ This is the core skill.
 
 Done when: you have at least three different evaluators running on one app, and you can show how closely your LLM judge agrees with human reviewers.
 
-Phase 4: Datasets
+## Phase 4: Datasets
 Build datasets from three sources: manual items, CSV import, and production traces. "Add to dataset" works on any production observation, and filtered observations can be batch-added. 
-langfuse
+
 Cover edge cases and failures, not just happy paths.
 Organize datasets in folders, and use dataset versioning. You can fetch a dataset as it existed at a given timestamp and run experiments on it for reproducibility. 
-langfuse
+
 
 Done when: you have a dataset of 50+ real, representative cases that grows from production failures.
 
@@ -102,49 +102,6 @@ Capstone project
 
 Build one app that uses every phase: a RAG or agent app with prompts in Langfuse, three evaluators, a production-sourced dataset, CI-gated experiments, a dashboard with alerts, and a self-hosted deployment. Write a short README on what failed, what you measured, and what you changed. That project is what you show employers.
 
-# Checklist 2
-
-0. Architecture / Data Model
-1. Python SDK v4
-2. Instrumentation
-3. Trace Design
-4. LLM Observability
-5. Framework Integrations
-6. Prompt Management
-7. RAG Observability
-8. Agents / Tools
-9. Scores
-10. Evaluation
-11. LLM-as-a-Judge
-12. Code Evaluators
-13. Datasets
-14. Experiments
-15. Online Evaluation
-16. Human Evaluation
-17. User Feedback
-18. Metrics / Dashboards
-19. Alerts
-20. Sampling / Performance
-21. Privacy / Masking
-22. Security Observability
-23. Releases / Versioning
-24. API / Data Platform
-25. CLI / MCP awareness
-26. RBAC / Organizations / Projects
-27. Authentication / SSO
-28. Retention / Lifecycle
-29. Self-hosted Architecture
-30. Docker Compose
-31. Production Storage
-32. Security / HTTPS / Secrets
-33. Backups / DR
-34. Scaling / HA
-35. Kubernetes / Helm
-36. Upgrades
-37. Langfuse platform monitoring
-38. Incident debugging
-39. CI/CD evaluation gates
-40. Final end-to-end production application
 
 
 

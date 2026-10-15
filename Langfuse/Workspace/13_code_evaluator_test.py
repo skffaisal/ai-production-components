@@ -99,7 +99,7 @@ if __name__ == "__main__":
     ) as request_span:
 
         response = chain.invoke(
-            {"question": "Explain Python class using a simple example."},
+            {"question": "Explain the faradays law"},
             config={
                 "callbacks": [langfuse_handler],
                 "run_name": "MANAGED_PROMPT_QA",
