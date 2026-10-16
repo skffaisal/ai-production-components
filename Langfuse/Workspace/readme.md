@@ -537,3 +537,8 @@ Value: `$.content` (since there are no indexes here)
 
 --> Add 5 observations
 
+version history of the added datasets can also be seen 
+
+![alt text](image-2.png)
+
+older version of the dataset can be retrieved in code using 16_langfuse_dataset_version_test.py
